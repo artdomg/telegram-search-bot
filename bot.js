@@ -1,6 +1,6 @@
 'use strict';
 
-var rp = require('request-promise');
+var search = require('./search');
 
 module.exports = {
 	init: (bot, options) => {
@@ -10,13 +10,12 @@ module.exports = {
 
 		var states = {};
 
-		var lang = options.lang || 'es-MX';
 		var name = options.botName;
 
 		bot.onText(/\/search (.+)/, (msg, match) => {
 			var chatId = msg.chat.id;
 
-			search(match[1], msg);
+			searchText(match[1], msg);
 		});
 
 		var regex = new RegExp(`/search@${name}$`);
@@ -26,7 +25,7 @@ module.exports = {
 		bot.on('message', (msg) => {
 			if(getState(msg)) {
 				deleteState(msg);
-				search(msg.text, msg);
+				searchText(msg.text, msg);
 			}
 		});
 
@@ -36,32 +35,24 @@ module.exports = {
 			bot.sendMessage(chatId, 'What do you want to search?');
 		}
 
-		function search(text, msg) {
+		function searchText(text, msg) {
 			var chatId = msg.chat.id;
 
-			var options = {
-				uri: `http://api.duckduckgo.com/?q=${text}&format=json`,
-				json: true,
-				headers: {
-					'Accept-Language': lang
-				}
-			};
-
-			return rp(options)
+			search(text, { lang: options.lang })
 			.then((data) => {
-				if(!data.AbstractText && !data.Image) {
+				if(!data.result && !data.image) {
 					return bot.sendMessage(chatId, 'Could not find anything.');
 				}
 
-				if(data.AbstractText) {
-					bot.sendMessage(chatId, data.AbstractText);
+				if(data.result) {
+					bot.sendMessage(chatId, data.result);
 				}
 
-				if(data.Image) {
-					bot.sendPhoto(chatId, data.Image);
+				if(data.image) {
+					bot.sendPhoto(chatId, data.image);
 				}
 			})
-			.catch((error) => bot.sendMessage(chatId, 'Oops. There was an error. Try again later'));
+			.catch(() => bot.sendMessage(chatId, 'Oops. There was an error. Try again later'));
 		}
 
 		function getState(msg) {
