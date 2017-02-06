@@ -12,10 +12,10 @@ if(!token || ! botName) {
 
 var telegramBot = new TelegramBot(token, { polling: true });
 
-var searchBot = require('./bot');
+var searchBot = require('./botEvents');
 searchBot.init(telegramBot, {
 	lang: lang,
-	botName: botName
+	name: botName
 });
 
 console.log('Search bot started');
