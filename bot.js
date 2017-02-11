@@ -19,7 +19,11 @@ module.exports = function(bot, options) {
 		initSearch: (msg, match) => {
 			var chatId = msg.chat.id;
 			stateManager.setState(true, msg);
-			bot.sendMessage(chatId, 'What do you want to search?');
+			bot.sendMessage(chatId, 'What do you want to search?', {
+				reply_markup: {
+					force_reply: true
+				}
+			});
 		},
 		search: (msg) => {
 			if(stateManager.getState(msg)) {
