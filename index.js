@@ -21,5 +21,5 @@ searchBot.init(telegramBot, {
 console.log('Search bot started');
 
 var app = require('express')();
-app.get('/', (req, res) => res.send('Running!'))
+app.get('/', (req, res) => res.send('Running!'));
 app.listen(process.env.PORT || 3000);

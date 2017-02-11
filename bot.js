@@ -20,8 +20,10 @@ module.exports = function(bot, options) {
 			var chatId = msg.chat.id;
 			stateManager.setState(true, msg);
 			bot.sendMessage(chatId, 'What do you want to search?', {
+				reply_to_message_id: msg.message_id,
 				reply_markup: {
-					force_reply: true
+					force_reply: true,
+					selective: true
 				}
 			});
 		},
